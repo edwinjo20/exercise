@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Articles</h1>
+
+    <div class="filter mb-4">
+    <form method="get" action="{{ path('article_index') }}" class="mb-4">
+        <div class="row">
+            <!-- Search Bar -->
+            <div class="col-md-6">
+                <input type="text" name="q" class="form-control" placeholder="Search articles..." value="{{ searchQuery }}">
+            </div>
+
+            <!-- Category Filter -->
+            <div class="col-md-4">
+                <select name="category" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- All Categories --</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {{ category.id == selectedCategoryId ? 'selected' : '' }}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Search</button>
+            </div>
+        </div>
+    </form>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Category</th>
+                <th>Action</th>
+                <th>Comment</th>
+                </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+                <tr>
+                    <td>{{ article.id }}</td>
+                    <td>{{ article.title }}</td>
+                    <td>{{ article.content }}</td>
+                    <td>{{ article.categorie.name }}</td>
+                    <td>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('article_edit', {id: article.id}) }}" class="btn btn-primary">Modify</a>
+                            <form method="post" action="{{ path('article_delete', {id: article.id}) }}" style="display: inline;" onsubmit="return confirm('Are you sure?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ path('article_view', {id: article.id}) }}" class="btn btn-info">View</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Edit Comment</h1>
+
+    <form method="post" action="{{ path('comment_edit', {id: comment.id}) }}">
+        <textarea name="content" class="form-control" required>{{ comment.content }}</textarea>
+        <button type="submit" class="btn btn-success mt-3">Save</button>
+    </form>
+{% endblock %}

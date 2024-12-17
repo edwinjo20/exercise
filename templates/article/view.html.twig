@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>{{ article.title }}</h1>
+<p>{{ article.content }}</p>
+
+<h2>Comments</h2>
+<ul>
+    {% for comment in comments %}
+        <li>
+            <strong>{{ comment.author.name }}</strong>: {{ comment.content }}
+            <br>
+            <small>{{ comment.createdAt|date('Y-m-d H:i') }}</small>
+
+            {% if app.user and app.user == comment.author %}
+                <form method="post" action="{{ path('comment_delete', {id: comment.id}) }}" style="display: inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            {% endif %}
+        </li>
+    {% else %}
+        <li>No comments yet. Be the first to comment!</li>
+    {% endfor %}
+</ul>
+
+{% if app.user %}
+    <h3>Add a Comment</h3>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+    {{ form_end(form) }}
+{% else %}
+    <p><a href="{{ path('app_login') }}">Log in</a> to post a comment.</p>
+{% endif %}
+{% endblock %}
